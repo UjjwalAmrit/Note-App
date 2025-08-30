@@ -1,5 +1,4 @@
 import dotenv from "dotenv"
-// Load environment variables
 dotenv.config()
 
 console.log("--- DEPLOYING LATEST VERSION AT 10:02 PM ---");
@@ -9,6 +8,8 @@ import cors from "cors"
 import session from "express-session"
 import passport from "./config/passport.js"
 import connectDB from "./config/database.js"
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 
 // Import routes
@@ -48,6 +49,7 @@ app.use(
   }),
 )
 
+
 // Passport middleware
 app.use(passport.initialize())
 app.use(passport.session())
@@ -56,6 +58,13 @@ app.use(passport.session())
 app.use("/api/auth", authRoutes)
 app.use("/api/notes", notesRoutes)
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 
 const PORT = process.env.PORT || 8000

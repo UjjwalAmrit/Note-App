@@ -1,3 +1,5 @@
+console.log("--- DEPLOYING LATEST VERSION AT 10:02 PM ---");
+
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"

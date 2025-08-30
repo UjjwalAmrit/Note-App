@@ -1,8 +1,6 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-console.log("--- DEPLOYING LATEST VERSION AT 10:02 PM ---");
-
 import express from "express"
 import cors from "cors"
 import session from "express-session"
@@ -28,7 +26,7 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 )
@@ -39,12 +37,11 @@ app.use(express.urlencoded({ extended: true }))
 // Session middleware for passport
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   }),
 )
@@ -58,6 +55,11 @@ app.use(passport.session())
 app.use("/api/auth", authRoutes)
 app.use("/api/notes", notesRoutes)
 
+// Health check route
+app.get("/api/health", (req, res) => {
+  res.json({ message: "Server is running successfully!" })
+})
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -65,25 +67,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-
-const PORT = process.env.PORT || 8000
-
-// Health check route
-app.get("/api/health", (req, res) => {
-  res.json({ message: "Server is running successfully!" })
-})
-
-app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    // Option 1: Redirect to a new frontend route
-    res.redirect('http://localhost:3000/my-new-component'); 
-    // Option 2: If using query params to pass a token
-    // res.redirect(`http://localhost:3000/my-new-component?token=${req.user.token}`);
-  }
-);
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -94,10 +77,8 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({ message: "Route not found" })
-})
+
+const PORT = process.env.PORT || 8000
 
 // Start server
 app.listen(PORT, () => {

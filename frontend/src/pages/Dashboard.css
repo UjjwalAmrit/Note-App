@@ -1,0 +1,246 @@
+/* ======================================= */
+/* --- GENERAL & VARIABLES --- */
+/* ======================================= */
+:root {
+  --primary-blue: #007aff;
+  --light-gray: #f4f5f7; /* Lighter background for the page */
+  --border-color: #dfe1e6;
+  --text-color: #172b4d; /* Darker text for better contrast */
+  --secondary-text-color: #5e6c84;
+  --background-color: #ffffff;
+  --danger-red: #de350b;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--light-gray);
+}
+
+.status-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: var(--secondary-text-color);
+}
+.status-message.error {
+  color: var(--danger-red);
+}
+
+/* ======================================= */
+/* --- MAIN LAYOUT --- */
+/* ======================================= */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--light-gray);
+}
+
+/* ======================================= */
+/* --- HEADER / NAVBAR --- */
+/* ======================================= */
+.dashboard-header {
+  background-color: var(--background-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 0 40px; /* More padding for desktop */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.dashboard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-icon {
+  color: var(--primary-blue);
+  font-size: 24px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sign-out-btn {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--secondary-text-color);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sign-out-btn:hover {
+  background-color: var(--light-gray);
+  color: var(--text-color);
+  border-color: #c1c7d0;
+}
+
+/* ======================================= */
+/* --- MAIN CONTENT AREA --- */
+/* ======================================= */
+.dashboard-content {
+  flex-grow: 1;
+  padding: 40px;
+  width: 100%;
+  max-width: 960px; /* Max width for readability */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.welcome-section {
+  margin-bottom: 40px;
+}
+
+.welcome-section h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--text-color);
+}
+
+.user-email {
+  color: var(--secondary-text-color);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* --- Create Note Form --- */
+.create-note-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.create-note-input {
+  flex-grow: 1;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.create-note-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.create-note-btn {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-note-btn:hover {
+  background: #0052cc; /* Darker blue on hover */
+}
+
+/* --- Notes List --- */
+.notes-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.notes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.note-item {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.note-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.note-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.delete-note-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary-text-color);
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-note-btn:hover {
+  color: var(--danger-red);
+  background: #ffeded;
+}
+
+.no-notes-message {
+  color: var(--secondary-text-color);
+  text-align: center;
+  padding: 40px 0;
+  grid-column: 1 / -1; /* Span all columns if grid is empty */
+}
+
+/* ======================================= */
+/* --- RESPONSIVENESS --- */
+/* ======================================= */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 0 20px;
+  }
+  .dashboard-content {
+    padding: 20px;
+  }
+  .create-note-form {
+    flex-direction: column;
+  }
+  .notes-list {
+    grid-template-columns: 1fr; /* Stack notes vertically */
+  }
+}

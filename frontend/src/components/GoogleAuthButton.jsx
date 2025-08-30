@@ -5,7 +5,12 @@ const GoogleAuthButton = ({ loading, disabled }) => {
     if (loading || disabled) return
 
     // Redirect to backend Google OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/auth/google`
+    const googleAuthUrl = import.meta.env.DEV
+    ? 'http://localhost:8000/api/auth/google' // URL for local development
+    : '/api/auth/google';                     // Relative URL for production
+
+  // Redirect to the correct endpoint
+  window.location.href = googleAuthUrl;
   }
 
   return (

@@ -4,9 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  build : {
-    outDir: '../backend/public',
-  },
   server: {
     proxy: {
       // Any request starting with /api will be forwarded to the backend

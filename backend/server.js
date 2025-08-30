@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import session from "express-session"
 import passport from "./config/passport.js"
 import connectDB from "./config/database.js"
+import path from 'path';
 
 // Import routes
 import authRoutes from "./routes/auth.js"
@@ -15,7 +16,7 @@ dotenv.config()
 connectDB()
 
 const app = express()
-const PORT = process.env.PORT || 8000
+
 
 // Middleware
 app.use(
@@ -48,6 +49,14 @@ app.use(passport.session())
 // Routes
 app.use("/api/auth", authRoutes)
 app.use("/api/notes", notesRoutes)
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'backend/public')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'backend/public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 8000
 
 // Health check route
 app.get("/api/health", (req, res) => {

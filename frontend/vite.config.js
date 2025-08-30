@@ -7,4 +7,13 @@ export default defineConfig({
   build : {
     outDir: '../backend/public',
   },
+  server: {
+    proxy: {
+      // Any request starting with /api will be forwarded to the backend
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
 })

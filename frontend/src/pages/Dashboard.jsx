@@ -3,7 +3,7 @@ import { FiTrash2, FiSun } from 'react-icons/fi'; // Icons from your new design
 import './Dashboard.css'; // We will use a new CSS file for this design
 
 // --- Backend Connection Setup ---
-const API_URL = 'http://localhost:8000' || '';
+const API_URL = import.meta.env.DEV ? 'http://localhost:8000' : '';
 
 const Dashboard = () => {
   // --- STATE MANAGEMENT (from our logic) ---

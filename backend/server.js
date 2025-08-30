@@ -1,8 +1,11 @@
+import dotenv from "dotenv"
+// Load environment variables
+dotenv.config()
+
 console.log("--- DEPLOYING LATEST VERSION AT 10:02 PM ---");
 
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
 import session from "express-session"
 import passport from "./config/passport.js"
 import connectDB from "./config/database.js"
@@ -12,8 +15,7 @@ import connectDB from "./config/database.js"
 import authRoutes from "./routes/auth.js"
 import notesRoutes from "./routes/notesRoutes.js"
 
-// Load environment variables
-dotenv.config()
+
 
 connectDB()
 

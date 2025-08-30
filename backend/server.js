@@ -4,8 +4,7 @@ import dotenv from "dotenv"
 import session from "express-session"
 import passport from "./config/passport.js"
 import connectDB from "./config/database.js"
-import path from 'path';
-import { fileURLToPath } from 'url';
+
 
 // Import routes
 import authRoutes from "./routes/auth.js"
@@ -51,12 +50,7 @@ app.use(passport.session())
 app.use("/api/auth", authRoutes)
 app.use("/api/notes", notesRoutes)
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+
 
 const PORT = process.env.PORT || 8000
 

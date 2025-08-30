@@ -4,14 +4,9 @@ const GoogleAuthButton = ({ loading, disabled }) => {
   const handleGoogleAuth = () => {
     if (loading || disabled) return
 
-    // Redirect to backend Google OAuth endpoint
-    const googleAuthUrl = import.meta.env.DEV
-    ? 'http://localhost:8000/api/auth/google' // URL for local development
-    : '/api/auth/google';                     // Relative URL for production
-
-  // Redirect to the correct endpoint
-  window.location.href = googleAuthUrl;
-  }
+   // This will use the correct backend URL in both development and production
+  window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+  };
 
   return (
     <button type="button" onClick={handleGoogleAuth} disabled={loading || disabled} className="google-auth-button">

@@ -11,4 +11,5 @@ export function MobileStatusBar({ time = "9:41" }) {
       </div>
     </div>
   );
+  
 }

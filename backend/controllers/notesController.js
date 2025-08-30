@@ -8,7 +8,7 @@ import Note from '../models/Note.js';
 export const getNotes = async (req, res) => {
   try {
     // req.user.userId is added by the authenticate middleware
-    const notes = await Note.find({ user: req.user.userId }).sort({ createdAt: -1 });
+    const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.status(200).json(notes);
   } catch (error) {
     console.error(error);
@@ -22,7 +22,7 @@ export const getNotes = async (req, res) => {
 export const createNote = async (req, res) => {
   try {
 	 console.log("Request Body:", req.body); 
-    console.log("Authenticated User ID:", req.user.userId);
+    console.log("Authenticated User ID:", req.user._id);
     const { title } = req.body;
 
     if (!title) {
@@ -45,6 +45,7 @@ export const createNote = async (req, res) => {
 // @desc    Delete a note
 // @route   DELETE /api/notes/:id
 // @access  Private
+
 export const deleteNote = async (req, res) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -53,15 +54,24 @@ export const deleteNote = async (req, res) => {
       return res.status(404).json({ message: 'Note not found' });
     }
 
-    // IMPORTANT: Check if the note belongs to the user trying to delete it
-    if (note.user.toString() !== req.user.userId) {
+    // --- NEW DEBUGGING LOGS ---
+    // console.log("--- DEBUGGING DELETE NOTE ---");
+    // console.log("1. Note's Owner ID:  ", note.user.toString());
+    // console.log("2. Logged-in User ID:", req.user._id.toString());
+    // console.log("3. Do they match?   :", note.user.toString() === req.user._id.toString());
+    // console.log("-----------------------------");
+    // --- END DEBUGGING LOGS ---
+
+    // Using toString() on both for a safe, direct comparison
+    if (note.user.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
     await note.deleteOne();
     res.status(200).json({ message: 'Note removed' });
   } catch (error) {
-    console.error(error);
+    // This will catch any crashes, like if req.user or note.user is missing
+    console.error("!!! DELETE NOTE CRASHED !!!", error);
     res.status(500).json({ message: 'Server Error' });
   }
 };

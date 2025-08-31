@@ -1,86 +1,97 @@
-import dotenv from "dotenv"
-dotenv.config()
-
-import express from "express"
-import cors from "cors"
-import session from "express-session"
-import passport from "./config/passport.js"
-import connectDB from "./config/database.js"
+// --- IMPORTS ---
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import session from "express-session";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// --- CUSTOM MODULES & CONFIG ---
+import passport from "./config/passport.js";
+import connectDB from "./config/database.js";
+import authRoutes from "./routes/auth.js";
+import notesRoutes from "./routes/notesRoutes.js";
 
-// Import routes
-import authRoutes from "./routes/auth.js"
-import notesRoutes from "./routes/notesRoutes.js"
+// --- INITIALIZATION ---
+// Load environment variables immediately
+dotenv.config();
 
+// Establish database connection
+connectDB();
 
+const app = express();
 
-connectDB()
-
-const app = express()
-
+// --- CORE MIDDLEWARE ---
+// Trust the first proxy for secure cookies in production (Render)
 app.set('trust proxy', 1);
 
+// Configure CORS to allow requests from your frontend client
+const corsOptions = {
+  origin: process.env.CLIENT_URL,
+  methods: "GET, POST, PUT, DELETE, PATCH, HEAD", // Explicitly allow methods
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
-// Middleware
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  }),
-)
+// Body parsers for JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// Session middleware for passport
+// Session middleware for Passport authentication
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // Set to true in production
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', // Required for cross-site cookies
     },
   }),
-)
+);
+
+// Passport authentication middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 
-// Passport middleware
-app.use(passport.initialize())
-app.use(passport.session())
+// --- API ROUTES ---
+app.use("/api/auth", authRoutes);
+app.use("/api/notes", notesRoutes);
 
-// Routes
-app.use("/api/auth", authRoutes)
-app.use("/api/notes", notesRoutes)
-
-// Health check route
+// Health check route to verify the server is running
 app.get("/api/health", (req, res) => {
-  res.json({ message: "Server is running successfully!" })
-})
+  res.json({ message: "Server is running successfully!" });
+});
 
+
+// --- STATIC FILE SERVING (for a combined frontend/backend) ---
+// This part is often not needed if your frontend is a separate service.
+// If your React/Vue app is in the 'public' folder, this will serve it.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Catch-all to serve index.html for client-side routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Error handling middleware
+
+// --- ERROR HANDLING MIDDLEWARE ---
+// This should be the last `app.use()`
 app.use((err, req, res, next) => {
-  console.error(err.stack)
+  console.error(err.stack);
   res.status(500).json({
-    message: "Something went wrong!",
+    message: "Something went wrong internally!",
     error: process.env.NODE_ENV === "development" ? err.message : {},
-  })
-})
+  });
+});
 
 
-const PORT = process.env.PORT || 8000
-
-// Start server
+// --- SERVER STARTUP ---
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
-})
+  console.log(`Server is running on port ${PORT}`);
+});

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {useAuth} from '../context/AuthContext'
+import { notesAPI } from '../services/api';
 import { FiTrash2, FiSun } from 'react-icons/fi'; // Icons from your new design
 import './Dashboard.css'; // We will use a new CSS file for this design
 

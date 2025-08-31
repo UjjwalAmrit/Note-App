@@ -53,7 +53,21 @@
 // export default App
 
 
-// A small change to force a new deployment on Render
+// frontend/src/App.jsx
+
+import React from 'react';
+// ... other imports ...
+import './App.css';
+
 function App() {
-  // ... rest of your App component
+  // ... all your component logic, JSX, etc. ...
+  // This is the comment you added to force the deploy
+  return (
+    <div className="App">
+      {/* Your application content */}
+    </div>
+  );
 }
+
+// ✅ ENSURE THIS LINE IS AT THE VERY BOTTOM OF THE FILE
+export default App;

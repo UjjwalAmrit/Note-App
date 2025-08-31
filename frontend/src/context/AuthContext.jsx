@@ -1,7 +1,9 @@
+
 // "use client"
 
 // import { createContext, useContext, useState, useEffect } from "react"
-// import { authAPI } from "../services/api"
+// // No need to import authAPI here anymore for initialization
+// // It's handled globally by the interceptor in api.js
 
 // const AuthContext = createContext()
 
@@ -15,24 +17,22 @@
 
 // export const AuthProvider = ({ children }) => {
 //   const [user, setUser] = useState(null)
+//   const [token, setToken] = useState(null)
 //   const [loading, setLoading] = useState(true)
-//   const [token, setToken] = useState(localStorage.getItem("token"))
 
 //   useEffect(() => {
-//     const initializeAuth = async () => {
+//     // This effect runs once when the app starts to restore the session
+//     const initializeAuth = () => {
 //       const storedToken = localStorage.getItem("token")
-//       if (storedToken) {
-//         try {
-//           // Verify token with backend
-//           const response = await authAPI.getProfile()
-//           setUser(response.data.user)
-//           setToken(storedToken)
-//         } catch (error) {
-//           console.error("Token verification failed:", error)
-//           localStorage.removeItem("token")
-//           setToken(null)
-//         }
+//       const storedUser = localStorage.getItem("user") // <-- Get user from storage
+
+//       if (storedToken && storedUser) {
+//         // If we have a token and user in storage, set them in the state immediately
+//         // This makes the app feel instant on refresh
+//         setToken(storedToken)
+//         setUser(JSON.parse(storedUser))
 //       }
+//       // We are done checking storage, so we can stop the initial loading state
 //       setLoading(false)
 //     }
 
@@ -40,15 +40,19 @@
 //   }, [])
 
 //   const login = (userData, authToken) => {
+//     // ✅ BUG FIX: Save BOTH the user object and the token to localStorage
+//     localStorage.setItem("user", JSON.stringify(userData))
+//     localStorage.setItem("token", authToken)
 //     setUser(userData)
 //     setToken(authToken)
-//     localStorage.setItem("token", authToken)
 //   }
 
 //   const logout = () => {
+//     // Clear everything from storage and state
+//     localStorage.removeItem("user")
+//     localStorage.removeItem("token")
 //     setUser(null)
 //     setToken(null)
-//     localStorage.removeItem("token")
 //   }
 
 //   const value = {
@@ -64,61 +68,59 @@
 // }
 
 
-"use client"
 
-import { createContext, useContext, useState, useEffect } from "react"
-// No need to import authAPI here anymore for initialization
-// It's handled globally by the interceptor in api.js
+// frontend/src/context/AuthContext.js
 
-const AuthContext = createContext()
+import { createContext, useContext, useState, useEffect } from "react";
+
+const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // This effect runs once when the app starts to restore the session
-    const initializeAuth = () => {
-      const storedToken = localStorage.getItem("token")
-      const storedUser = localStorage.getItem("user") // <-- Get user from storage
+    console.log("AuthContext: 1. Initializing session from localStorage.");
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-      if (storedToken && storedUser) {
-        // If we have a token and user in storage, set them in the state immediately
-        // This makes the app feel instant on refresh
-        setToken(storedToken)
-        setUser(JSON.parse(storedUser))
-      }
-      // We are done checking storage, so we can stop the initial loading state
-      setLoading(false)
+    if (storedToken && storedUser) {
+      console.log("AuthContext: 2. Found token and user in storage. Setting state now.");
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
+    } else {
+      console.log("AuthContext: 2. No token/user found in storage.");
     }
-
-    initializeAuth()
-  }, [])
+    
+    console.log("AuthContext: 3. Finished loading session. Setting loading to false.");
+    setLoading(false);
+  }, []);
 
   const login = (userData, authToken) => {
-    // ✅ BUG FIX: Save BOTH the user object and the token to localStorage
-    localStorage.setItem("user", JSON.stringify(userData))
-    localStorage.setItem("token", authToken)
-    setUser(userData)
-    setToken(authToken)
-  }
+    console.log("AuthContext: LOGIN function called with user and token.");
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", authToken);
+    setUser(userData);
+    setToken(authToken);
+    console.log("AuthContext: State and localStorage have been updated.");
+  };
 
   const logout = () => {
-    // Clear everything from storage and state
-    localStorage.removeItem("user")
-    localStorage.removeItem("token")
-    setUser(null)
-    setToken(null)
-  }
+    console.log("AuthContext: LOGOUT function called.");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    setToken(null);
+  };
 
   const value = {
     user,
@@ -127,10 +129,10 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user && !!token,
-  }
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
+  // This log will fire on every render, telling us the current state.
+  console.log("AuthContext: STATE UPDATE - isAuthenticated:", value.isAuthenticated, "| loading:", value.loading);
 
-
-
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

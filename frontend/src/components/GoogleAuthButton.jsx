@@ -28,7 +28,6 @@ const GoogleAuthButton = ({ loading, disabled }) => {
       </svg>
       {loading ? "Connecting..." : "Continue with Google"}
     </button>
-  )
 }
 
 export default GoogleAuthButton

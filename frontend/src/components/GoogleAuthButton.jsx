@@ -4,12 +4,10 @@ const GoogleAuthButton = ({ loading, disabled }) => {
   const handleGoogleAuth = () => {
     if (loading || disabled) return
 
-   // This will use the correct backend URL in both development and production
+    //   // This will use the correct backend URL in both development and production
   window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
   };
-
-  return (
-    <button type="button" onClick={handleGoogleAuth} disabled={loading || disabled} className="google-auth-button">
+  <button type="button" onClick={handleGoogleAuth} disabled={loading || disabled} className="google-auth-button">
       <svg className="google-icon" viewBox="0 0 24 24" width="20" height="20">
         <path
           fill="#4285F4"

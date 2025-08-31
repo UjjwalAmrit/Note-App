@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import session from "express-session";
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 // --- CUSTOM MODULES & CONFIG ---
 import passport from "./config/passport.js";
@@ -66,17 +64,6 @@ app.get("/api/health", (req, res) => {
 });
 
 
-// --- STATIC FILE SERVING (for a combined frontend/backend) ---
-// This part is often not needed if your frontend is a separate service.
-// If your React/Vue app is in the 'public' folder, this will serve it.
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Catch-all to serve index.html for client-side routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
 
 // --- ERROR HANDLING MIDDLEWARE ---

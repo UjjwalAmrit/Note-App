@@ -1,4 +1,4 @@
-import "./secrets.js";
+import "./secrets.js"
 
 import React from "react"
 import ReactDOM from "react-dom/client"

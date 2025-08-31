@@ -23,6 +23,9 @@ const app = express();
 // Trust the first proxy for secure cookies in production (Render)
 app.set('trust proxy', 1);
 
+const clientURL = process.env.CLIENT_URL;
+console.log(`SERVER LOG: Allowing requests from origin: ${clientURL}`); 
+
 // Configure CORS to allow requests from your frontend client
 const corsOptions = {
   origin: process.env.CLIENT_URL,

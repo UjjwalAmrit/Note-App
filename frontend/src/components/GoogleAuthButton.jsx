@@ -1,13 +1,26 @@
 "use client"
 
+import React from 'react';
+
 const GoogleAuthButton = ({ loading, disabled }) => {
   const handleGoogleAuth = () => {
-    if (loading || disabled) return
+    // If the button is in a loading or disabled state, do nothing.
+    if (loading || disabled) return;
 
-    //   // This will use the correct backend URL in both development and production
-  window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+    // This will use the correct backend URL from your environment variables,
+    // making it work in both development (localhost) and production (Render).
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`;
   };
-  <button type="button" onClick={handleGoogleAuth} disabled={loading || disabled} className="google-auth-button">
+
+  // ✅ FIX: Added the missing "return" statement here.
+  // A React component must return the JSX it wants to render.
+  return (
+    <button 
+      type="button" 
+      onClick={handleGoogleAuth} 
+      disabled={loading || disabled} 
+      className="google-auth-button" // Assumes you have this CSS class defined
+    >
       <svg className="google-icon" viewBox="0 0 24 24" width="20" height="20">
         <path
           fill="#4285F4"
@@ -28,6 +41,7 @@ const GoogleAuthButton = ({ loading, disabled }) => {
       </svg>
       {loading ? "Connecting..." : "Continue with Google"}
     </button>
-}
+  );
+};
 
-export default GoogleAuthButton
+export default GoogleAuthButton;

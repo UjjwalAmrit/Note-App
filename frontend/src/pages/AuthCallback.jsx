@@ -58,56 +58,6 @@
 // export default AuthCallback
 
 
-// // frontend/src/pages/AuthCallback.jsx
-
-// import { useEffect } from "react";
-// import { useSearchParams, useNavigate } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
-
-// const AuthCallback = () => {
-//   const [searchParams] = useSearchParams();
-//   const { login } = useAuth();
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const token = searchParams.get("token");
-//     const userParam = searchParams.get("user");
-//     const error = searchParams.get("error");
-
-//     if (error) {
-//       console.error("Authentication error from backend:", error);
-//       navigate(`/login?error=${error}`);
-//       return;
-//     }
-
-//     if (token && userParam) {
-//       try {
-//         const user = JSON.parse(decodeURIComponent(userParam));
-//         // This component's ONLY job is to call login.
-//         login(user, token);
-//       } catch (e) {
-//         console.error("Failed to parse user data from URL:", e);
-//         navigate("/login?error=Invalid session data");
-//       }
-//     } else {
-//       console.error("Missing token or user data in callback.");
-//       navigate("/login?error=Incomplete session data");
-//     }
-//   }, [searchParams, login, navigate]);
-
-//   // A simple loading indicator while the login process happens
-//   return (
-//     <div className="loading-container">
-//       <div className="loading-spinner"></div>
-//       <p>Finalizing authentication...</p>
-//     </div>
-//   );
-// };
-
-// export default AuthCallback;
-
-
-
 // frontend/src/pages/AuthCallback.jsx
 
 import { useEffect } from "react";
@@ -125,6 +75,7 @@ const AuthCallback = () => {
     const error = searchParams.get("error");
 
     if (error) {
+      console.error("Authentication error from backend:", error);
       navigate(`/login?error=${error}`);
       return;
     }
@@ -132,15 +83,19 @@ const AuthCallback = () => {
     if (token && userParam) {
       try {
         const user = JSON.parse(decodeURIComponent(userParam));
-        login(user, token); // This component's only job is to call login.
+        // This component's ONLY job is to call login.
+        login(user, token);
       } catch (e) {
+        console.error("Failed to parse user data from URL:", e);
         navigate("/login?error=Invalid session data");
       }
     } else {
+      console.error("Missing token or user data in callback.");
       navigate("/login?error=Incomplete session data");
     }
   }, [searchParams, login, navigate]);
 
+  // A simple loading indicator while the login process happens
   return (
     <div className="loading-container">
       <div className="loading-spinner"></div>

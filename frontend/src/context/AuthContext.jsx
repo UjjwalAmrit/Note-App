@@ -1,6 +1,6 @@
 
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 const AuthContext = createContext();
 
@@ -18,38 +18,30 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("AuthContext: 1. Initializing session from localStorage.");
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
     if (storedToken && storedUser) {
-      console.log("AuthContext: 2. Found token and user in storage. Setting state now.");
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
-    } else {
-      console.log("AuthContext: 2. No token/user found in storage.");
     }
     
-    console.log("AuthContext: 3. Finished loading session. Setting loading to false.");
     setLoading(false);
   }, []);
 
   const login = (userData, authToken) => {
-    console.log("AuthContext: LOGIN function called with user and token.");
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", authToken);
     setUser(userData);
     setToken(authToken);
-    console.log("AuthContext: State and localStorage have been updated.");
   };
 
-  const logout = () => {
-    console.log("AuthContext: LOGOUT function called.");
+  const logout = useCallback(() => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
     setToken(null);
-  };
+  },[]);
 
   const value = {
     user,
@@ -59,9 +51,6 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAuthenticated: !!user && !!token,
   };
-
-  // This log will fire on every render, telling us the current state.
-  console.log("AuthContext: STATE UPDATE - isAuthenticated:", value.isAuthenticated, "| loading:", value.loading);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
